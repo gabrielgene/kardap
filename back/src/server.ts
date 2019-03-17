@@ -9,6 +9,20 @@ const client = new elasticsearch.Client({
   log: "trace"
 });
 
+client.search({
+  index: 'customer',
+  body: {
+    query: {
+      match: {
+        name: 'doe'
+      }
+    }
+  }
+}, (err, result) => {
+  if (err) console.log(err)
+  if (result) console.log(result);
+})
+
 // define a route handler for the default home page
 app.get("/", (req, res) => {
   type ola = {
