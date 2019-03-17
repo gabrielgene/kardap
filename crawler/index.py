@@ -1,6 +1,7 @@
 from flask import Flask
 from bs4 import BeautifulSoup
 import requests
+import re
 import json
 app = Flask(__name__)
 
@@ -10,35 +11,71 @@ def getRests(uuid, siteUrl):
   req = requests.get(urlRest)
   return req.text
 
+def mountDict(dictHtml):
+  #Soup
+  soup = BeautifulSoup(dictHtml['html'], 'html.parser')
+
+
+  for index, script_tag in enumerate(soup.find_all('script')):
+    result = re.search('__NEXT_LOADED_PAGES__', script_tag.text)
+    if result:
+      scriptTagContent = soup.find_all('script')[index].text
+
+  jsonString = scriptTagContent.split('=')[1].replace(';__NEXT_LOADED_PAGES__','')
+  finalJson = json.loads(jsonString)
+
+  #Get products
+  menu = finalJson['props']['initialState']['restaurant']['menu']
+
+  menuItens = menu[0]['itens']
+
+  #Get all menu products
+  allItems = []
+  for targetItem in menuItens:
+    itemChoices = targetItem['choices']  if 'choices' in targetItem else ''
+    itemDescription = targetItem['description']
+
+  for target in itemChoices:
+    for item in target['garnishItens']:
+      details = item['description'].encode('utf-8', 'ignore') if item['description'] else ''
+      newDict = {
+        'name': item['description'].encode('utf-8', 'ignore'),
+        'details': details,
+        'price': item['unitPrice'],
+      }
+      allItems.append(newDict)
+
+  finalRestaurant = {
+    'restaurant': dictHtml['restaurant'],
+    'dishes': allItems
+  }
+
+  return finalRestaurant
+
 def allRests():
-  urlAddress = 'https://webapp.ifood.com.br/api/restaurant/list?filterJson={"city":"SALVADOR","state":"BA","page":1,"restaurantIds":[],"pageSize":1}&responseMode=RESPONSE_MODE_LIST'
+  urlAddress = 'https://webapp.ifood.com.br/api/restaurant/list?filterJson={"city":"SALVADOR","state":"BA","page":1,"restaurantIds":[],"pageSize":50}&responseMode=RESPONSE_MODE_LIST'
   req = requests.post(urlAddress)
   listVar = req.json()['data']['list']
 
   htmls = []
   for target_list in listVar:
-    htmls.append(getRests(target_list['uuid'], target_list['siteUrl']))
+    restaurant = target_list['name'].encode('utf-8', 'ignore')
+    restaurantDescription = target_list['shortDescription'].encode('utf-8', 'ignore') if 'shortDescription' in target_list else ''
+    tipo = target_list['mainFoodType']['name'].encode('utf-8', 'ignore')
+    htmls.append({
+      'restaurant': restaurant,
+      'tipo': tipo,
+      'restaurantDescription': restaurantDescription,
+      'html':getRests(target_list['uuid'], target_list['siteUrl'])
+    })
 
-  soup = BeautifulSoup(htmls[0], 'html.parser')
-  scriptTagContent = soup.find_all('script')[4].text
-  jsonString = scriptTagContent.split('=')[1].replace(';__NEXT_LOADED_PAGES__','')
-  finalJson = json.loads(jsonString)
+  restaurants = []
+  for html in htmls:
+    restaurants.append(mountDict(html))
 
-  testando = finalJson['props']['initialState']['restaurant']['menu'][0]['itens'][0]['choices'][1]['garnishItens']
+  print(restaurants)
 
-  for target in testando:
-    print(target['description'])
-    print(target['details'])
-    print(target['unitPrice'])
-
-  # print(finalJson['props']['initialState']['restaurant']['menu'][0]['itens'][0]['choices'][1]['garnishItens'])
-  # text = req.text
-  # f = open("restaurants.txt","w+")
-  # f.write(text.encode('utf-8'))
-  # f.close()
-  return scriptTagContent.split('=')[1]
-  # return soup.prettify()
-  # return req.text
+  return 'run'
 
 
 @app.route('/')
