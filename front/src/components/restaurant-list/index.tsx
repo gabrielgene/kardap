@@ -9,11 +9,11 @@ import ImageIcon from '@material-ui/icons/Image';
 import WorkIcon from '@material-ui/icons/Work';
 import BeachAccessIcon from '@material-ui/icons/BeachAccess';
 
-interface Props{
+interface Props {
   classes: any;
-};
+}
 
-const styles = (theme:Theme) => ({
+const styles = (theme: Theme) => ({
   root: {
     width: '100%',
     maxWidth: 360,
