@@ -9,7 +9,6 @@ import {
   createStyles,
   Theme,
   withStyles,
-  WithStyles,
 } from '@material-ui/core/styles';
 import BackIcon from '@material-ui/icons/ArrowBackIos';
 import SearchIcon from '@material-ui/icons/Search';
