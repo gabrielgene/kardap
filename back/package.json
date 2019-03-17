@@ -17,6 +17,7 @@
     "typescript": "3.3.3333"
   },
   "dependencies": {
+    "elasticsearch": "15.4.1",
     "express": "4.16.4"
   }
 }
