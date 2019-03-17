@@ -11,7 +11,7 @@ import {
   withStyles,
   WithStyles,
 } from '@material-ui/core/styles';
-import MenuIcon from '@material-ui/icons/Menu';
+import BackIcon from '@material-ui/icons/ArrowBackIos';
 import SearchIcon from '@material-ui/icons/Search';
 
 const styles = (theme: Theme) =>
@@ -85,7 +85,11 @@ const styles = (theme: Theme) =>
     },
   });
 
-export interface Props extends WithStyles<typeof styles> {}
+export interface Props {
+  back?: boolean;
+  classes?: any;
+  history: any;
+}
 
 interface State {
   anchorEl: null | HTMLElement;
@@ -99,12 +103,22 @@ class PrimarySearchAppBar extends React.Component<Props, State> {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, back, history } = this.props;
 
     return (
       <div className={classes.root}>
         <AppBar position="static">
           <Toolbar>
+            {back && (
+              <IconButton
+                className={classes.menuButton}
+                color="inherit"
+                aria-label="voltar"
+                onClick={() => history.goBack()}
+              >
+                <BackIcon />
+              </IconButton>
+            )}
             <Typography
               className={classes.title}
               variant="h6"
@@ -132,5 +146,4 @@ class PrimarySearchAppBar extends React.Component<Props, State> {
     );
   }
 }
-
 export default withStyles(styles)(PrimarySearchAppBar);
