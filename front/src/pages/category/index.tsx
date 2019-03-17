@@ -1,12 +1,18 @@
 import React from 'react';
+import Topbar from '../../components/topbar';
 
 interface Props {
   name: string;
 }
 
 const Category = (props: Props) => {
-  console.log(props)
-  return <h1>Categoria</h1>;
+  console.log(props);
+  return (
+    <React.Fragment>
+      <Topbar/>
+      <h1>Categoria</h1>
+    </React.Fragment>
+  );
 };
 
 // const Category = () => {
