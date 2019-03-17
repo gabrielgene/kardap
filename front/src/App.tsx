@@ -1,14 +1,20 @@
 import React, { Component } from 'react';
-import Category from './pages/category';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 
-class App extends Component {
-  render() {
-    return (
-      <div>
-        <Category name="categoria" />
-      </div>
-    );
-  }
-}
+import Category from './pages/category';
+import Restaurant from './pages/restaurant';
+import Serp from './pages/serp';
+import Home from './pages/home';
+
+const App = () => (
+  <Router>
+    <div>
+      <Route path="/" exact component={Home} />
+      <Route path="/categoria/:category" component={Category} />
+      <Route path="/restaurante/:slug" component={Restaurant} />
+      <Route path="/busca" component={Serp} />
+    </div>
+  </Router>
+);
 
 export default App;
