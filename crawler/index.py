@@ -27,23 +27,28 @@ def mountDict(dictHtml):
   #Get products
   menu = finalJson['props']['initialState']['restaurant']['menu']
 
-  menuItens = menu[0]['itens']
+  menuItens = False
 
-  #Get all menu products
+  for index, itens_menu in enumerate(menu):
+    if 'itens' in itens_menu:
+      menuItens = menu[0]['itens']
+
   allItems = []
-  for targetItem in menuItens:
-    itemChoices = targetItem['choices']  if 'choices' in targetItem else ''
-    itemDescription = targetItem['description']
+  if menuItens:
+    #Get all menu products
+    for targetItem in menuItens:
+      itemChoices = targetItem['choices']  if 'choices' in targetItem else ''
+      itemDescription = targetItem['description']
 
-  for target in itemChoices:
-    for item in target['garnishItens']:
-      details = item['description'].encode('utf-8', 'ignore') if item['description'] else ''
-      newDict = {
-        'name': item['description'].encode('utf-8', 'ignore'),
-        'details': details,
-        'price': item['unitPrice'],
-      }
-      allItems.append(newDict)
+    for target in itemChoices:
+      for item in target['garnishItens']:
+        details = item['description'].encode('utf-8', 'ignore') if item['description'] else ''
+        newDict = {
+          'name': item['description'].encode('utf-8', 'ignore'),
+          'details': details,
+          'price': item['unitPrice'],
+        }
+        allItems.append(newDict)
 
   finalRestaurant = {
     'restaurant': dictHtml['restaurant'],
@@ -53,10 +58,12 @@ def mountDict(dictHtml):
   return finalRestaurant
 
 def allRests():
-  urlAddress = 'https://webapp.ifood.com.br/api/restaurant/list?filterJson={"city":"SALVADOR","state":"BA","page":1,"restaurantIds":[],"pageSize":50}&responseMode=RESPONSE_MODE_LIST'
+  print("START")
+  urlAddress = 'https://webapp.ifood.com.br/api/restaurant/list?filterJson={"city":"SALVADOR","state":"BA","page":1,"restaurantIds":[],"pageSize":140}&responseMode=RESPONSE_MODE_LIST'
   req = requests.post(urlAddress)
   listVar = req.json()['data']['list']
 
+  print("Begin Parse Restaurants")
   htmls = []
   for target_list in listVar:
     restaurant = target_list['name'].encode('utf-8', 'ignore')
@@ -69,11 +76,15 @@ def allRests():
       'html':getRests(target_list['uuid'], target_list['siteUrl'])
     })
 
+  print("Begin Final Parse")
   restaurants = []
   for html in htmls:
     restaurants.append(mountDict(html))
 
-  print(restaurants)
+  print("Write TXT")
+  with open('restaurants.txt', 'w') as f:
+    for item in restaurants:
+        f.write("%s\n" % item)
 
   return 'run'
 
