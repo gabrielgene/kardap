@@ -7,10 +7,10 @@ interface Props {
 }
 
 const Category = (props: Props) => {
-  console.log(props);
+  console.log(props.history);
   return (
     <React.Fragment>
-      <Topbar back history={props.history}/>
+      <Topbar back history={props.history} />
       <h1>Categoria</h1>
     </React.Fragment>
   );

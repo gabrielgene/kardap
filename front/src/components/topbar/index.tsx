@@ -5,13 +5,10 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import InputBase from '@material-ui/core/InputBase';
 import { fade } from '@material-ui/core/styles/colorManipulator';
-import {
-  createStyles,
-  Theme,
-  withStyles,
-} from '@material-ui/core/styles';
+import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import BackIcon from '@material-ui/icons/ArrowBackIos';
 import SearchIcon from '@material-ui/icons/Search';
+import qs from 'query-string';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -88,21 +85,39 @@ export interface Props {
   back?: boolean;
   classes?: any;
   history: any;
+  tab?: any;
 }
 
 interface State {
   anchorEl: null | HTMLElement;
   mobileMoreAnchorEl: null | HTMLElement;
+  input: any;
 }
 
 class PrimarySearchAppBar extends React.Component<Props, State> {
   state: State = {
     anchorEl: null,
     mobileMoreAnchorEl: null,
+    input: '',
+  };
+
+  componentDidMount() {
+    const { search } = this.props.history.location;
+    const query = qs.parse(search);
+    if (query) {
+      this.setState({ input: query.q });
+    }
+  }
+
+  handleChange = (e: any) => {
+    const { value } = e.target;
+    this.setState({ input: value });
+    this.props.history.push(`/busca?q=${value}`);
   };
 
   render() {
-    const { classes, back, history } = this.props;
+    const { classes, back, history, tab } = this.props;
+    const { input } = this.state;
 
     return (
       <div className={classes.root}>
@@ -132,13 +147,14 @@ class PrimarySearchAppBar extends React.Component<Props, State> {
               </div>
               <InputBase
                 placeholder="Buscar…"
+                onChange={this.handleChange}
+                value={input}
                 classes={{
                   root: classes.inputRoot,
                   input: classes.inputInput,
                 }}
               />
             </div>
-            <div className={classes.grow} />
           </Toolbar>
         </AppBar>
       </div>
