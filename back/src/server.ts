@@ -9,27 +9,35 @@ const client = new elasticsearch.Client({
   log: "trace"
 });
 
-client.search({
-  index: 'customer',
-  body: {
-    query: {
-      match: {
-        name: 'doe'
-      }
-    }
-  }
-}, (err, result) => {
-  if (err) console.log(err)
-  if (result) console.log(result);
-})
-
 // define a route handler for the default home page
 app.get("/", (req, res) => {
-  type ola = {
-    [key: string]: number;
-  };
-  console.log(client);
   res.send("Hello world!");
+});
+
+app.get("/api/:index", async (req, res) => {
+  const index = req.params.index;
+  const requestQuery = Object.keys(req.query).length ? req.query : null;
+  const queryObject = {
+    index,
+  };
+
+  const fullQueryObject = requestQuery ? {
+  	...queryObject,
+  	body: { query: { match: requestQuery } },
+  } : queryObject;
+
+  try {
+    const response = await client.search(fullQueryObject)
+    res.send({
+      message: "ok",
+      json: response.hits ? response.hits.hits : []
+    });
+  } catch (err) {
+    res.send({
+      message: "ok",
+      json: err
+    });
+  }
 });
 
 // start the Express server
