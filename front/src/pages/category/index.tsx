@@ -1,10 +1,13 @@
 import React from 'react';
 
 interface Props {
-    name: string
-};
+  name: string;
+}
 
-const Category = (props: Props) => <h1>{props.name}</h1>
+const Category = (props: Props) => {
+  console.log(props)
+  return <h1>Categoria</h1>;
+};
 
 // const Category = () => {
 //     const x = 2 + 3;
@@ -21,4 +24,4 @@ const Category = (props: Props) => <h1>{props.name}</h1>
 //     }
 // }
 
-export default Category
+export default Category;
