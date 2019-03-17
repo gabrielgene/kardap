@@ -2,14 +2,18 @@
   "name": "back",
   "version": "1.0.0",
   "description": "## Development For linux, run: ```sh sudo sysctl -w vm.max_map_count=262144 ```",
-  "main": "index.js",
+  "main": "src/server.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/express": "4.16.1",
+    "@types/node": "11.11.3",
     "typescript": "3.3.3333"
   },
   "dependencies": {
