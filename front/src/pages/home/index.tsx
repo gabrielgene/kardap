@@ -1,9 +1,15 @@
-import React from 'react';
+import React from "react";
 
-interface Props {
-  name: string;
-}
-
-const Home = (props: Props) => <h1>Home</h1>;
+const Home = () => {
+  return (
+    <React.Fragment>
+      <h1>Home page</h1>
+      <form action="">
+        Busca: <input type='text' />
+      </form>
+      <h2>Categoria</h2>
+    </React.Fragment>
+  );
+};
 
 export default Home;
