@@ -16,25 +16,18 @@ app.get("/", (req, res) => {
 
 app.get("/api/:index", async (req, res) => {
   const index = req.params.index;
-  const requestQuery = Object.keys(req.query).length ? req.query : false;
+  const requestQuery = Object.keys(req.query).length ? req.query : null;
   const queryObject = {
     index,
   };
-
-  console.log({requestQuery})
 
   const fullQueryObject = requestQuery ? {
   	...queryObject,
   	body: { query: { match: requestQuery } },
   } : queryObject;
 
-  console.log({fullQueryObject});
-
   try {
     const response = await client.search(fullQueryObject)
-    // const response = await client.search(queryObject)
-
-    console.log(response)
     res.send({
       message: "ok",
       json: response.hits ? response.hits.hits : []
