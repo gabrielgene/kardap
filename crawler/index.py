@@ -19,18 +19,25 @@ def allRests():
   for target_list in listVar:
     htmls.append(getRests(target_list['uuid'], target_list['siteUrl']))
 
-  # print(htmls[0])
   soup = BeautifulSoup(htmls[0], 'html.parser')
-  print(soup.find_all('script')[4])
-  # print(soup.prettify())
+  scriptTagContent = soup.find_all('script')[4].text
+  jsonString = scriptTagContent.split('=')[1].replace(';__NEXT_LOADED_PAGES__','')
+  finalJson = json.loads(jsonString)
 
+  testando = finalJson['props']['initialState']['restaurant']['menu'][0]['itens'][0]['choices'][1]['garnishItens']
 
+  for target in testando:
+    print(target['description'])
+    print(target['details'])
+    print(target['unitPrice'])
+
+  # print(finalJson['props']['initialState']['restaurant']['menu'][0]['itens'][0]['choices'][1]['garnishItens'])
   # text = req.text
   # f = open("restaurants.txt","w+")
   # f.write(text.encode('utf-8'))
   # f.close()
-
-  return soup.prettify()
+  return scriptTagContent.split('=')[1]
+  # return soup.prettify()
   # return req.text
 
 
